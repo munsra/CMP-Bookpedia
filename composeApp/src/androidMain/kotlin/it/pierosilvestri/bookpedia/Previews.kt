@@ -6,8 +6,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import it.pierosilvestri.bookpedia.book.domain.Book
+import it.pierosilvestri.bookpedia.book.presentation.book_list.BookListScreen
+import it.pierosilvestri.bookpedia.book.presentation.book_list.BookListState
 import it.pierosilvestri.bookpedia.book.presentation.book_list.components.BookSearchBar
-import org.jetbrains.compose.ui.tooling.preview.Preview
+
 
 @Preview
 @Composable
@@ -25,4 +29,34 @@ private fun BookSearchBarPreview() {
                 .fillMaxWidth()
         )
     }
+}
+
+@Preview
+@Composable
+fun BookListScreenPreview() {
+
+    BookListScreen(
+        state = BookListState(
+            searchResults = books,
+        ),
+        onAction = {
+
+        }
+    )
+}
+
+private val books = (1 .. 100).map {
+    Book(
+        id = it.toString(),
+        title = "Book $it",
+        imageUrl = "https://test.com",
+        authors = listOf("R.R. Tolkien"),
+        description = "Description $it",
+        languages = emptyList(),
+        firstPublishYear = null,
+        averageRating = 4.654656,
+        ratingCount = 5,
+        numPages = 100,
+        numEditions = 3
+    )
 }
