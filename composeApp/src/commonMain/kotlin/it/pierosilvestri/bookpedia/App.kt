@@ -1,6 +1,8 @@
 package it.pierosilvestri.bookpedia
 
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -41,7 +43,14 @@ fun App() {
         navigation<Route.BookGraph>(
             startDestination = Route.BookList
         ) {
-            composable<Route.BookList> {
+            composable<Route.BookList>(
+                exitTransition = {
+                    slideOutHorizontally()
+                },
+                popEnterTransition = {
+                    slideInHorizontally()
+                }
+            ) {
                 val viewModel = koinViewModel<BookListViewModel>()
                 val selectedBookViewModel =
                     it.sharedKoinViewModel<SelectedBookViewModel>(navController)
@@ -60,7 +69,14 @@ fun App() {
                     }
                 )
             }
-            composable<Route.BookDetail> {
+            composable<Route.BookDetail>(
+                enterTransition = { slideInHorizontally { initOffset ->
+                    initOffset
+                } },
+                exitTransition = { slideOutHorizontally { initOffset ->
+                    initOffset
+                } }
+            ) {
                 val selectedBookViewModel =
                     it.sharedKoinViewModel<SelectedBookViewModel>(navController)
                 val selectedBook by selectedBookViewModel.selectedBook.collectAsStateWithLifecycle()
@@ -84,7 +100,7 @@ fun App() {
 }
 
 @Composable
-private inline fun <reified  T: ViewModel> NavBackStackEntry.sharedKoinViewModel(
+private inline fun <reified T : ViewModel> NavBackStackEntry.sharedKoinViewModel(
     navController: NavController
 ): T {
     val navGraphRoute = destination.parent?.route ?: return koinViewModel<T>()

@@ -1,5 +1,6 @@
 package it.pierosilvestri.bookpedia.book.data.mappers
 
+import it.pierosilvestri.bookpedia.book.data.database.BookEntity
 import it.pierosilvestri.bookpedia.book.data.dto.SearchedBookDto
 import it.pierosilvestri.bookpedia.book.domain.Book
 
@@ -23,7 +24,7 @@ fun SearchedBookDto.toBook(): Book {
     )
 }
 
-/*
+
 fun Book.toBookEntity(): BookEntity {
     return BookEntity(
         id = id,
@@ -55,4 +56,3 @@ fun BookEntity.toBook(): Book {
         numEditions = numEditions
     )
 }
- */

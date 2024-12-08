@@ -10,7 +10,6 @@ import it.pierosilvestri.bookpedia.core.presentation.toUiText
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -28,17 +27,19 @@ class BookListViewModel(
 
     private var cachedBooks = emptyList<Book>()
     private var searchJob: Job? = null
+    private var observeFavoriteJob: Job? = null
 
     private val _state = MutableStateFlow(BookListState())
     val state = _state
         .onStart {
-            if(cachedBooks.isEmpty()) {
+            if (cachedBooks.isEmpty()) {
                 observeSearchQuery()
             }
+            observeFavoriteBooks()
         }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000L ),
+            SharingStarted.WhileSubscribed(5000L),
             _state.value
         )
 
@@ -60,6 +61,20 @@ class BookListViewModel(
                 }
             }
         }
+    }
+
+    private fun observeFavoriteBooks() {
+        observeFavoriteJob?.cancel()
+        observeFavoriteJob = bookRepository
+            .getFavoriteBooks()
+            .onEach { favoriteBooks ->
+                _state.update {
+                    it.copy(
+                        favoriteBooks = favoriteBooks
+                    )
+                }
+            }.launchIn(viewModelScope)
+
     }
 
     private fun observeSearchQuery() {
